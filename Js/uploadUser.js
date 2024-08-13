@@ -1,16 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, Image, StyleSheet, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const UploadUser = () => {
+const UploadUser = ({ navigation }) => {
     const [publicKey, setPublicKey] = useState('');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [imageUri, setImageUri] = useState(null);
 
+    // Lấy publicKey từ AsyncStorage khi component render
+    useEffect(() => {
+        const getPublicKey = async () => {
+            try {
+                const storedPublicKey = await AsyncStorage.getItem('publicKey');
+                if (storedPublicKey) {
+                    setPublicKey(storedPublicKey);
+                }
+            } catch (error) {
+                console.error('Error retrieving publicKey from AsyncStorage:', error);
+            }
+        };
+
+        getPublicKey();
+    }, []);
+
     const handleChoosePhoto = async () => {
-        // Request permission to access the photo library
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
             Alert.alert('Permission required', 'Sorry, we need media library permissions to make this work!');
@@ -18,17 +33,17 @@ const UploadUser = () => {
         }
 
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            aspecct: [4, 3],
+            aspect: [1, 1],
             quality: 1,
-          });
-      
-          console.log(result);
+        });
 
-          if (!result.canceled) {
+        if (!result.canceled) {
             setImageUri(result.assets[0].uri);
-          }    
+        } else {
+            console.log('User cancelled image picker');
+        }
     };
 
     const handleSubmit = async () => {
@@ -57,7 +72,12 @@ const UploadUser = () => {
             });
 
             if (response.ok) {
-                Alert.alert('Success', 'User added successfully.');
+                Alert.alert('Success', 'User added successfully.', [
+                    {
+                        text: 'OK',
+                        onPress: () => navigation.navigate('TabBotton'),
+                    },
+                ]);
             } else {
                 Alert.alert('Error', 'Failed to add user.');
             }
@@ -69,32 +89,33 @@ const UploadUser = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Public Key: {publicKey}</Text>
-          
-                <Image
-                    source={{ uri: imageUri }}
-                    style={styles.image}
-           />
-
+            <Text style={styles.text}>Public Key:</Text>
+            <TextInput
+                style={styles.input1}
+                value={publicKey}
+                editable={false} // Không cho phép chỉnh sửa
+            />
+            <Image
+                source={{ uri: imageUri }}
+                style={styles.image}
+            />
             <TextInput
                 style={styles.input}
                 placeholder="Name"
                 value={name}
                 onChangeText={setName}
             />
-
             <TextInput
                 style={styles.input}
                 placeholder="Email"
                 value={email}
                 onChangeText={setEmail}
             />
-
-            <Button title="Choose Photo" onPress={handleChoosePhoto} />
-
-           
-
-            <Button title="Submit" onPress={handleSubmit} />
+            <View style={styles.buttonContainer}>
+                <Button title="Chọn ảnh" onPress={handleChoosePhoto} />
+                <View style={styles.buttonSpacer} />
+                <Button title="Lưu" onPress={handleSubmit} />
+            </View>
         </View>
     );
 };
@@ -116,13 +137,34 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         marginBottom: 20,
+        borderRadius: 5,
+    },
+    input1: {
+        color: 'blue',
+        width: '100%',
+        padding: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        marginBottom: 20,
+        fontSize: 12,
+        textAlign: 'center',
+        borderRadius: 5,
     },
     image: {
         width: 200,
         height: 200,
         marginBottom: 20,
-        
         borderColor: 'red',
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        paddingHorizontal: 10,
+    },
+    buttonSpacer: {
+        width: 10, // Khoảng cách giữa các nút
     },
 });
 
