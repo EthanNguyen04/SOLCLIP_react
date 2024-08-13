@@ -1,25 +1,22 @@
 import React from 'react';
-import { View, Image } from 'react-native'; // Thêm import cho Image
+import { View, Image } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import VideoPlayer from './VideoPlayer';
 import CreatVideo from './CreatVideo';
 import Money from './Money';
-import Feild from './Field';
+import Field from './Field';
 import Profile from './Profile';
 
 const Tab = createBottomTabNavigator();
 
 const TabBotton = () => (
   <Tab.Navigator screenOptions={{
-    headerShown: false, //an tat ca tabscreen header
+    headerShown: false, 
     tabBarStyle:{
       backgroundColor: '#6E3D99',
-      height:60, 
+      height:'7%', 
       position: 'absolute',
-      bottom:2,
-      right:16,
-      left: 16,
-      borderRadius: 10
+      bottom: 2,
     }
   }}>
     <Tab.Screen
@@ -30,8 +27,11 @@ const TabBotton = () => (
         tabBarIcon: ({ focused }) => (
           <View>
             <Image
-              style={{ width: 20, height: 20 }}
-              source={require('../image/icons8-home-24.png')} // Đảm bảo đường dẫn đúng
+              style={{ 
+                width: focused ? 28 : 20, // Tăng kích thước khi tab được chọn
+                height: focused ? 28 : 20,
+              }}
+              source={require('../image/icons8-home-24.png')}
             />
           </View>
         ),
@@ -45,8 +45,11 @@ const TabBotton = () => (
         tabBarIcon: ({ focused }) => (
           <View>
             <Image
-              style={{ width: 20, height: 20 }}
-              source={require('../image/icons8-home-24.png')} // Đảm bảo đường dẫn đúng
+              style={{ 
+                width: focused ? 28 : 20, 
+                height: focused ? 28 : 20,
+              }}
+              source={require('../image/icons8-add-50.png')}
             />
           </View>
         ),
@@ -60,23 +63,29 @@ const TabBotton = () => (
         tabBarIcon: ({ focused }) => (
           <View>
             <Image
-              style={{ width: 20, height: 20 }}
-              source={require('../image/icons8-home-24.png')} // Đảm bảo đường dẫn đúng
+              style={{ 
+                width: focused ? 28 : 20, 
+                height: focused ? 28 : 20,
+              }}
+              source={require('../image/icons8-money-50.png')}
             />
           </View>
         ),
       }}
     />
     <Tab.Screen
-      name="Feild"
-      component={Feild}
+      name="Field"
+      component={Field}
       options={{
         headerShown: false,
         tabBarIcon: ({ focused }) => (
           <View>
             <Image
-              style={{ width: 20, height: 20 }}
-              source={require('../image/icons8-home-24.png')} // Đảm bảo đường dẫn đúng
+              style={{ 
+                width: focused ? 28 : 20, 
+                height: focused ? 28 : 20,
+              }}
+              source={require('../image/icons8-bag-50.png')}
             />
           </View>
         ),
@@ -90,8 +99,11 @@ const TabBotton = () => (
         tabBarIcon: ({ focused }) => (
           <View>
             <Image
-              style={{ width: 20, height: 20 }}
-              source={require('../image/icons8-home-24.png')} // Đảm bảo đường dẫn đúng
+              style={{ 
+                width: focused ? 28 : 20, 
+                height: focused ? 28 : 20,
+              }}
+              source={require('../image/icons8-home-24.png')}
             />
           </View>
         ),

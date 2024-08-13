@@ -1,20 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Dimensions } from 'react-native';
-import { Video } from 'expo-av'; // Đảm bảo đã cài đặt expo-av để phát video
-import { PanGestureHandler } from 'react-native-gesture-handler'; // Import PanGestureHandler
+import { Video } from 'expo-av';
+import { PanGestureHandler } from 'react-native-gesture-handler';
+import { useFocusEffect } from '@react-navigation/native';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const VideoPlayer = () => {
   const [videos, setVideos] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const videoRef = useRef(null);
 
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const response = await fetch("http://192.168.1.18:3000/api/videos"); // Sử dụng địa chỉ IP của máy tính
+        const response = await fetch("http://192.168.1.18:3000/api/videos");
         if (!response.ok) {
           throw new Error("Failed to fetch videos");
         }
@@ -30,12 +32,20 @@ const VideoPlayer = () => {
     fetchVideos();
   }, []);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      videoRef.current?.playAsync();
+
+      return () => {
+        videoRef.current?.pauseAsync();
+      };
+    }, [])
+  );
+
   const handleGestureEvent = (event) => {
     if (event.nativeEvent.translationY < -50) {
-      // Vuốt lên
       handleNext();
     } else if (event.nativeEvent.translationY > 50) {
-      // Vuốt xuống
       handlePrev();
     }
   };
@@ -57,7 +67,7 @@ const VideoPlayer = () => {
   }
 
   const video = videos[currentIndex];
-  const videoUrl = video.url.replace('\\', '/'); // Chuyển đổi dấu gạch chéo ngược thành dấu gạch chéo xuôi
+  const videoUrl = video.url.replace('\\', '/');
 
   return (
     <PanGestureHandler onGestureEvent={handleGestureEvent}>
@@ -65,14 +75,17 @@ const VideoPlayer = () => {
         {video && (
           <View style={styles.videoContainer}>
             <Video
-              source={{ uri: `http://192.168.1.18:3000${videoUrl}` }} // Sử dụng địa chỉ IP của máy tính
+              ref={videoRef}
+              source={{ uri: `http://192.168.1.18:3000${videoUrl}` }}
               style={styles.video}
               useNativeControls
               resizeMode="contain"
               shouldPlay
             />
-            <Text style={styles.title}>{video.title}</Text>
-            <Text>{video.content}</Text>
+            <View style={styles.textContainer}>
+              <Text style={styles.title}>{video.title}</Text>
+              <Text style={styles.content}>{video.content}</Text>
+            </View>
           </View>
         )}
       </View>
@@ -85,20 +98,37 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 16,
   },
   videoContainer: {
-    width: width * 0.9,
-    height: width * 0.56,
-    marginBottom: 16,
+    width: width,
+    height: height,
+    justifyContent: 'flex-end',
   },
   video: {
+    backgroundColor:'black',
     width: '100%',
     height: '100%',
+    position: 'absolute',
+    bottom: '7%'
+  },
+  textContainer: {
+    position: 'absolute',
+    bottom: 150,
+    left: 10, // Cách bên trái 10
+    width: '95%', // Điều chỉnh width để không tràn ra khỏi màn hình
+    alignItems: 'flex-start', // Căn chỉnh text bắt đầu từ bên trái
+    backgroundColor: 'rgba(0, 0, 0, 0.4)', // Nền mờ để dễ đọc chữ
+    borderRadius:5,
+    padding: 10,
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#fff',
+  },
+  content: {
+    fontSize: 14,
+    color: '#fff',
   },
   errorText: {
     color: 'red',

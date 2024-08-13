@@ -1,7 +1,30 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity,Alert } from 'react-native';
 
 const WelcomeScreen = ({ navigation }) => {
+    const handleStartPress = async () => {
+        try {
+            const response = await fetch('http://192.168.1.18:3000/api/create-wallet', {
+                method: 'GET', // Hoặc 'POST' nếu bạn cần gửi dữ liệu
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            console.log('API response:', data);
+
+            // Điều hướng đến WalletH và truyền dữ liệu
+            navigation.navigate('WalletH', {
+                publicKey: data.publicKey,
+                seedPhrase: data.seedPhrase,
+            });
+        } catch (error) {
+            console.error('Error calling API:', error);
+            Alert.alert('Error', 'Có lỗi xảy ra khi gọi API');
+        }
+    };
     return (
         <View style={styles.container}>
             <View style={styles.overlay}>
@@ -13,14 +36,14 @@ const WelcomeScreen = ({ navigation }) => {
                 <Text style={styles.title}>Chào Mừng bạn đến với NFT</Text>
                 <Text style={styles.subtitle}>Ứng dụng NFT tất cả trong một dành cho bạn - kiếm tiền điện tử, đúc NFT, kết nối với những người cùng đam mê tiền điện tử và tận hưởng hành trình này!</Text>
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('TabBotton')}
+                    onPress={handleStartPress} // Gọi hàm khi bấm nút
                     style={styles.button}
                     activeOpacity={0.8} // Hiệu ứng nhấn
                 >
                     <Text style={styles.buttonText}>Bắt đầu</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => console.log('Button Pressed')}
+                    onPress={() => navigation.navigate('Recoverwallet')}
                     style={styles.transparentButton}
                     activeOpacity={0.8} // Hiệu ứng nhấn
                 >
