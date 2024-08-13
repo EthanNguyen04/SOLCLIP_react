@@ -13,23 +13,30 @@ const VideoPlayer = () => {
   const [error, setError] = useState(null);
   const videoRef = useRef(null);
 
-  useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        const response = await fetch("http://192.168.1.18:3000/api/videos");
-        if (!response.ok) {
-          throw new Error("Failed to fetch videos");
-        }
-        const data = await response.json();
-        setVideos(data);
-        setLoading(false);
-      } catch (error) {
-        setError(error.message);
-        setLoading(false);
+  // Lấy video từ API
+  const fetchVideos = async () => {
+    try {
+      const response = await fetch("http://192.168.1.18:3000/api/videos");
+      if (!response.ok) {
+        throw new Error("Lỗi khi lấy video");
       }
-    };
+      const data = await response.json();
+      setVideos(data);
+      setLoading(false);
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    // Lấy video lần đầu tiên
     fetchVideos();
+
+    // Thiết lập polling để lấy video mới mỗi 30 giây
+    const interval = setInterval(fetchVideos, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   useFocusEffect(
@@ -63,7 +70,7 @@ const VideoPlayer = () => {
   }
 
   if (error) {
-    return <Text style={styles.errorText}>Error: {error}</Text>;
+    return <Text style={styles.errorText}>Lỗi: {error}</Text>;
   }
 
   const video = videos[currentIndex];
@@ -105,20 +112,20 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   video: {
-    backgroundColor:'black',
+    backgroundColor: 'black',
     width: '100%',
     height: '100%',
     position: 'absolute',
-    bottom: '7%'
+    bottom: '7%',
   },
   textContainer: {
     position: 'absolute',
     bottom: 150,
-    left: 10, // Cách bên trái 10
-    width: '95%', // Điều chỉnh width để không tràn ra khỏi màn hình
-    alignItems: 'flex-start', // Căn chỉnh text bắt đầu từ bên trái
-    backgroundColor: 'rgba(0, 0, 0, 0.4)', // Nền mờ để dễ đọc chữ
-    borderRadius:5,
+    left: 10,
+    width: '95%',
+    alignItems: 'flex-start',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    borderRadius: 5,
     padding: 10,
   },
   title: {
