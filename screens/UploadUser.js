@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, Image, StyleSheet, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { BASE_URL } from '../config'; // Đường dẫn tới file config.js
 const UploadUser = ({ navigation }) => {
     const [publicKey, setPublicKey] = useState('');
     const [name, setName] = useState('');
@@ -63,7 +63,7 @@ const UploadUser = ({ navigation }) => {
         });
 
         try {
-            const response = await fetch('http://192.168.1.18:3000/api/add-user', {
+            const response = await fetch(`${BASE_URL}/api/add-user`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -75,7 +75,7 @@ const UploadUser = ({ navigation }) => {
                 Alert.alert('Success', 'User added successfully.', [
                     {
                         text: 'OK',
-                        onPress: () => navigation.navigate('TabBotton'),
+                        onPress: () => navigation.navigate('BottomTab'),
                     },
                 ]);
             } else {

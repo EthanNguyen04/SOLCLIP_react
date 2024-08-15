@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const Recoverwallet = ({ navigation }) => {
+import { BASE_URL } from '../config'; // Đường dẫn tới file config.js
+const RecoverWallet = ({ navigation }) => {
     const [seedPhrase, setSeedPhrase] = useState('');
 
     const handleRecover = async () => {
         try {
-            const response = await fetch('http://192.168.1.18:3000/api/recover-wallet', {
+            const response = await fetch(`${BASE_URL}/api/recover-wallet`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ const Recoverwallet = ({ navigation }) => {
                     [
                         {
                             text: 'OK',
-                            onPress: () => navigation.navigate('TabBotton'), // Điều hướng tới TabBotton
+                            onPress: () => navigation.navigate('BottomTab'), // Điều hướng tới TabBotton
                         },
                     ]
                 );
@@ -93,4 +93,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Recoverwallet;
+export default RecoverWallet;
