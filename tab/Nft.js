@@ -65,7 +65,7 @@ const Nft = () => {
               setError('Không có NFT nào được tìm thấy cho khóa công khai này.');
             }
           } else {
-            setError('Không có dữ liệu hoặc đã xảy ra lỗi.');
+            setError('Không có dữ liệu.');
           }
         } else {
           setError('Đã xảy ra lỗi khi lấy dữ liệu.');

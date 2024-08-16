@@ -3,7 +3,7 @@ import { View, Text, FlatList, Image, StyleSheet, ActivityIndicator, TouchableOp
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Đảm bảo bạn đã cài AsyncStorage
 import { BASE_URL } from '../config';
 import { useFocusEffect } from '@react-navigation/native';
-import { LogBox } from 'react-native';
+import { LogBox, Linking } from 'react-native';
 
 // Tắt tất cả các cảnh báo màu vàng
 LogBox.ignoreAllLogs(true);
@@ -83,20 +83,27 @@ console.log(item.id)
 
       if (response.ok) {
         Alert.alert(
-          'Mua NFT Thành Công',
-          `Nhấn vào liên kết sau để hoàn tất giao dịch:\n${data.consentUrl}`,
-          [
-            {
-              text: 'Copy Link',
-              onPress: () => {
-                Clipboard.setString(data.consentUrl);
-                Alert.alert('Đã sao chép liên kết vào bộ nhớ tạm');
-              },
-            },
-            { text: 'OK' },
-          ]
+            'Mua NFT Thành Công',
+            `Nhấn vào liên kết sau để hoàn tất giao dịch:\n${data.consentUrl}`,
+            [
+                {
+                    text: 'Copy Link',
+                    onPress: () => {
+                        Clipboard.setString(data.consentUrl);
+                        Alert.alert('Đã sao chép liên kết vào bộ nhớ tạm');
+                        console.log(data.consentUrl)
+                        console.log(encodeURIComponent(data.consentUrl))
+                        // Sử dụng liên kết sâu với Phantom
+                        const phantomUrl = `https://phantom.app/ul/browser/${data.consentUrl}`;
+
+                        Linking.openURL(phantomUrl)
+                            .catch(err => console.error('Không thể mở liên kết bằng Phantom:', err));
+                    },
+                },
+                { text: 'OK' },
+            ]
         );
-      } else {
+    }else {
         Alert.alert('Lỗi', data.error || 'Không thể mua NFT');
       }
     } catch (err) {
