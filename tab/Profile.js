@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, Image, StyleSheet, ActivityIndicator, FlatList, Dimensions, TouchableOpacity, TouchableWithoutFeedback, Alert } from 'react-native';
+import { View, Text, Image, StyleSheet, ActivityIndicator, FlatList, Dimensions, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '../config';
 import { Video } from 'expo-av';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native'; // Nhập useNavigation
 import { LinearGradient } from 'expo-linear-gradient';
 import Entypo from '@expo/vector-icons/Entypo';
 
@@ -20,7 +20,7 @@ const Profile = () => {
   const [playingVideo, setPlayingVideo] = useState(null); // ID của video đang phát
 
   const [publicKey, setPublicKey] = useState('');
-
+  const navigation = useNavigation();
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
@@ -71,7 +71,9 @@ const Profile = () => {
   const handlePressOut = () => {
     setPlayingVideo(null); // Dừng phát video khi nhả ra
   };
-
+  const navigateToWallet = () => {
+    navigation.navigate('Wallet'); // Điều hướng sang màn hình Wallet
+  };
   const updateKol = async () => {
     if (!publicKey) {
       Alert.alert('Lỗi', 'Public key chưa được thiết lập.');
@@ -106,20 +108,21 @@ const Profile = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.iconContainer}>
+       <View style={styles.iconContainer}>
         <LinearGradient
           colors={['#00FFA3', '#DC1FFF', '#00F5FF']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.gradient}
         >
-          <TouchableOpacity style={styles.buttonContent} activeOpacity={0.8}>
+          <TouchableOpacity
+            style={styles.buttonContent}
+            activeOpacity={0.8}
+            onPress={navigateToWallet} // Điều hướng khi nhấn nút
+          >
             <Entypo name="wallet" size={24} color="white" />
           </TouchableOpacity>
         </LinearGradient>
-        <TouchableOpacity style={styles.buttonKol} activeOpacity={0.8} onPress={updateKol}>
-          <Text>Làm kol</Text>
-        </TouchableOpacity>
       </View>
       {/* Card View */}
       <View style={styles.card}>

@@ -7,6 +7,7 @@ import NewWallet from './screens/NewWallet';
 import BottomTab from './screens/BottomTab';
 import RecoverWallet from './screens/RecoverWallet';
 import UploadUser from './screens/UploadUser';
+import Wallet from './screens/Wallet';
 
 const Stack = createStackNavigator();
 
@@ -50,6 +51,8 @@ export default function App() {
         <Stack.Screen name="UploadUser" component={UploadUser} />
         <Stack.Screen name="BottomTab" component={BottomTab} />
         <Stack.Screen name="RecoverWallet" component={RecoverWallet} />
+        <Stack.Screen name="Wallet" component={Wallet} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
