@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity,Alert } from 'react-native';
-import { BASE_URL } from '../config'; // Đường dẫn tới file config.js
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
+import { BASE_URL } from '../config';
 import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Text as SvgText, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 
-
-const NewWallet = ({ route, navigation }) => {
+const Wellcome = ({ route, navigation }) => {
   const handleStartPress = async () => {
     try {
         const response = await fetch(`${BASE_URL}/api/create-wallet`, {
@@ -31,13 +31,67 @@ const NewWallet = ({ route, navigation }) => {
 return (
     <View style={styles.container}>
         <View style={styles.overlay}>
-            <Text style={styles.title}>Wellcome to</Text>
             <Image 
-                source={require('../image/logo.png')} // Đảm bảo đường dẫn đúng
+                source={require('../image/Logohoanthien.png')} // Đảm bảo đường dẫn đúng
                 style={styles.logo}
                 resizeMode="contain" // Điều chỉnh theo tỷ lệ gốc của hình ảnh
-            />
-            <Text style={styles.subtitle}>SolClips is an entertainment platform consisting of short videos you can mine our SOLC token by creating short videos that attract viewers or you can watch videos to earn SOLC daily.</Text>
+            />            
+            <Svg  style={styles.svg}>
+                <Defs>
+                    <SvgLinearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
+                    <Stop offset="0" stopColor="#00FFA3" stopOpacity="1" />
+                    <Stop offset="0.5" stopColor="#DC1FFF" stopOpacity="1" />
+                    <Stop offset="1" stopColor="#00F5FF" stopOpacity="1" />
+                    </SvgLinearGradient>
+                </Defs>
+           
+                <SvgText
+                    fill="url(#grad)"
+                    fontSize="16"
+                    fontWeight="bold"
+                    x="5"
+                    y="20"
+                >
+                    SolClips is an entertainment platform
+                </SvgText>
+                <SvgText
+                    fill="url(#grad)"
+                    fontSize="16"
+                    fontWeight="bold"
+                    x="0"
+                    y="40"
+                >
+                    consisting of short videos you can
+                </SvgText>
+                <SvgText
+                    fill="url(#grad)"
+                    fontSize="16"
+                    fontWeight="bold"
+                    x="0"
+                    y="60"
+                >
+                    mine our SOLC token creating
+                </SvgText>
+                <SvgText
+                    fill="url(#grad)"
+                    fontSize="16"
+                    fontWeight="bold"
+                    x="0"
+                    y="80"
+                >
+                    videos that attract viewers or
+                </SvgText>
+                <SvgText
+                    fill="url(#grad)"
+                    fontSize="16"
+                    fontWeight="bold"
+                    x="0"
+                    y="100"
+                >
+                   you can watch videos to earn SOLC daily.
+                </SvgText>
+
+            </Svg>
             <LinearGradient
                 colors={['#00FFA3', '#DC1FFF', '#00F5FF']}
                 start={{ x: 0, y: 0 }}
@@ -79,8 +133,8 @@ overlay: {
 },
 logo: {
 
-    width: 150, // Kích thước của logo
-    height: 150,
+    width: 300, // Kích thước của logo
+    height: 300,
 },
 button: {
     borderRadius: 5,
@@ -124,6 +178,12 @@ subtitle: {
     color: '#ddd',
     marginBottom: 20,
 },
+svg:{
+    height:150,
+     width:300,
+     alignItems: 'center',
+     justifyContent: 'center'
+}
 });
 
-export default NewWallet;
+export default Wellcome;

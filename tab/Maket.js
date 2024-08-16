@@ -20,14 +20,14 @@ const Maket = () => {
       } else {
         Alert.alert('Lỗi', 'Không tìm thấy public key.');
       }
-
+  
       // Tải dữ liệu từ API
       const response1 = await fetch(`${BASE_URL}/api/fetch-items`);
       const data1 = await response1.json();
-
+  
       const response2 = await fetch(`${BASE_URL}/api/nfts`);
       const data2 = await response2.json();
-
+  
       if (response1.ok && response2.ok) {
         const fetchedItems = data1.data.map(item1 => {
           const matchedItem = data2.find(item2 => item2.id === item1.item.id);
@@ -37,11 +37,12 @@ const Maket = () => {
             description: item1.item.description,
             imageUrl: item1.item.imageUrl,
             priceCents: item1.item.priceCents || 0,
+            kol: matchedItem ? matchedItem.kol : null, // Include kol field
             from: matchedItem ? matchedItem.from : 0,
             to: matchedItem ? matchedItem.to : 0
           };
         }).filter(item => item.priceCents > 0);
-
+  
         setItems(fetchedItems);
       } else {
         setError(data1.error || data2.error || 'Failed to fetch items');
@@ -52,6 +53,7 @@ const Maket = () => {
       setLoading(false);
     }
   }, []);
+  
 
   useFocusEffect(
     useCallback(() => {
@@ -113,6 +115,7 @@ console.log(item.id)
           <Text>{item.description}</Text>
           <Text>Price: ${(item.priceCents / 100).toFixed(2)}</Text>
           <Text>From: {item.from}</Text>
+          <Text>kol: {item.kol}</Text>
           <Text>To: {item.to}</Text>
           <TouchableOpacity style={styles.button} onPress={() => handlePurchase(item)}>
             <Text style={styles.buttonText}>Mua</Text>

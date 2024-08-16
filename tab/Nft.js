@@ -50,6 +50,7 @@ const Nft = () => {
                   id: item1.item.id,
                   imageUrl: item1.item.imageUrl,
                   name: item1.item.name,
+                  fol: matchedItem ? matchedItem.kol : 'Không xác định',
                   from: matchedItem ? matchedItem.from : 'Không xác định',
                   to: matchedItem ? matchedItem.to : 'Không xác định'
                 };
@@ -101,10 +102,11 @@ const Nft = () => {
         // Lưu trữ `from` và `to` vào AsyncStorage dưới dạng chuỗi
         const from = String(item.from); // Chuyển đổi `from` thành chuỗi
         const to = String(item.to); // Chuyển đổi `to` thành chuỗi
-  
+        const kol = String(item.kol);
         await AsyncStorage.setItem('from', from);
         await AsyncStorage.setItem('to', to);
-  
+      await AsyncStorage.setItem('kol', kol);
+      console.log(`Đã lưu : ${kol}`);
         console.log(`Đã lưu : ${from} đến ${to}`);
       } else {
         Alert.alert('Lỗi', data.error || 'Không thể cập nhật thông tin người dùng.');
@@ -145,6 +147,7 @@ const Nft = () => {
           <View style={styles.cardContent}>
             <Text style={styles.name}>{item.name}</Text>
             <Text style={styles.id}>{item.id}</Text>
+            <Text style={styles.fromTo}>kol: {item.kol}</Text>
             <Text style={styles.fromTo}>Từ: {item.from}</Text>
             <Text style={styles.fromTo}>Đến: {item.to}</Text>
             <TouchableOpacity style={styles.button} onPress={() => handleUse(item)}>
