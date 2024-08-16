@@ -1,12 +1,11 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, Image, StyleSheet, ActivityIndicator, FlatList, Dimensions, TouchableOpacity,TouchableWithoutFeedback } from 'react-native';
+import { View, Text, Image, StyleSheet, ActivityIndicator, FlatList, Dimensions, TouchableOpacity, TouchableWithoutFeedback, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '../config';
 import { Video } from 'expo-av';
 import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Entypo from '@expo/vector-icons/Entypo';
-
 
 const { width } = Dimensions.get('window');
 const numColumns = 3; // Số cột
@@ -73,6 +72,33 @@ const Profile = () => {
     setPlayingVideo(null); // Dừng phát video khi nhả ra
   };
 
+  const updateKol = async () => {
+    if (!publicKey) {
+      Alert.alert('Lỗi', 'Public key chưa được thiết lập.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${BASE_URL}/api/update-video-kol`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ publickey: publicKey, newKolValue: "kol" }), // Thay đổi giá trị 123 thành giá trị kol mong muốn
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert('Thành Công', data.message);
+      } else {
+        Alert.alert('Lỗi', data.error || 'Không thể cập nhật kol.');
+      }
+    } catch (err) {
+      Alert.alert('Lỗi', 'Đã xảy ra lỗi khi cập nhật kol.');
+    }
+  };
+
   if (loading) return <ActivityIndicator size="large" color="#0000ff" />;
   if (error) return <Text style={styles.errorMessage}>{`Error: ${error}`}</Text>;
 
@@ -80,7 +106,7 @@ const Profile = () => {
 
   return (
     <View style={styles.container}>
-        <View style={styles.iconContainer}>
+      <View style={styles.iconContainer}>
         <LinearGradient
           colors={['#00FFA3', '#DC1FFF', '#00F5FF']}
           start={{ x: 0, y: 0 }}
@@ -91,6 +117,9 @@ const Profile = () => {
             <Entypo name="wallet" size={24} color="white" />
           </TouchableOpacity>
         </LinearGradient>
+        <TouchableOpacity style={styles.buttonKol} activeOpacity={0.8} onPress={updateKol}>
+          <Text>Làm kol</Text>
+        </TouchableOpacity>
       </View>
       {/* Card View */}
       <View style={styles.card}>
@@ -129,75 +158,82 @@ const Profile = () => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 10,
-        backgroundColor: '#000',
-      },
-      iconContainer: {
-        position: 'absolute',
-        top: 40,
-        right: 20,
-        zIndex: 1, // Đảm bảo rằng biểu tượng nằm trên các phần tử khác
-      },
-      gradient: {
-        borderRadius: 5,
-        paddingVertical: 10,
-        paddingHorizontal: 15,
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
-      buttonContent: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-      },
-      card: {
-        backgroundColor: '#1e2639',
-        borderRadius: 10,
-        marginTop: 20,
-        padding: 15,
-        marginBottom: 20,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 5,
-        elevation: 15, // Thêm độ sâu cho card trên Android
-        color:'#fff',
-      },
-      image: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        marginBottom: 10,
-      },
-      name: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 5,
-        color:'#fff',
-      },
-      email: {
-        fontSize: 18,
-        color: '#666',
-        color:'#aeaeae',
-      },
-      videoContainer: {
-        flex: 1,
-        margin: 5, // Khoảng cách giữa các video
-      },
-      video: {
-        width: videoWidth,
-        height: videoHeight,
-      },
-      columnWrapper: {
-        justifyContent: 'space-between',
-      },
-      errorMessage: {
-        fontSize: 18,
-        color: 'red',
-      },
-    });
+  container: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: '#000',
+  },
+  iconContainer: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+    zIndex: 1, // Đảm bảo rằng biểu tượng nằm trên các phần tử khác
+  },
+  gradient: {
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  card: {
+    backgroundColor: '#1e2639',
+    borderRadius: 10,
+    marginTop: 20,
+    padding: 15,
+    marginBottom: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 15, // Thêm độ sâu cho card trên Android
+    color:'#fff',
+  },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
+  },
+  name: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color:'#fff',
+  },
+  email: {
+    fontSize: 18,
+    color: '#666',
+    color:'#aeaeae',
+  },
+  videoContainer: {
+    flex: 1,
+    margin: 5, // Khoảng cách giữa các video
+  },
+  video: {
+    width: videoWidth,
+    height: videoHeight,
+  },
+  columnWrapper: {
+    justifyContent: 'space-between',
+  },
+  errorMessage: {
+    fontSize: 18,
+    color: 'red',
+  },
+  buttonKol: {
+    marginTop: 50,
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  }
+});
 
 export default Profile;

@@ -9,6 +9,7 @@ import Create from '../tab/Create';
 import Nft from '../tab/Nft';
 import Maket from '../tab/Maket';
 import Profile from '../tab/Profile';
+import Kol from '../tab/Kol';
 
 const Tab = createBottomTabNavigator();
 
@@ -30,6 +31,9 @@ const BottomTab = () => {
                   break;
                 case 'Create':
                   iconName = focused ? 'add-circle-outline' : 'add-circle-outline';
+                  break;
+                case 'Kol':
+                  iconName = focused ? 'person-circle' : 'person-circle-outline';
                   break;
                 case 'Nft':
                   iconName = focused ? 'albums-outline' : 'albums-outline';
@@ -60,6 +64,7 @@ const BottomTab = () => {
         >
           <Tab.Screen name="Home" component={Home} options={{ headerShown: false }} />
           <Tab.Screen name="Create" component={Create} options={{ headerShown: false }} />
+          <Tab.Screen name="Kol" component={Kol} options={{ headerShown: false }} />
           <Tab.Screen name="Nft" component={Nft} options={{ headerShown: false }} />
           <Tab.Screen name="Maket" component={Maket} options={{ headerShown: false }} />
           <Tab.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
@@ -68,7 +73,6 @@ const BottomTab = () => {
     </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

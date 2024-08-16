@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Dimensions, Animated, TouchableWithoutFeedback, Modal, Button, TouchableOpacity } from 'react-native';
+import { View, TextInput, Image, Text, StyleSheet, ActivityIndicator, Dimensions, Animated, TouchableWithoutFeedback, Modal, Button, TouchableOpacity } from 'react-native';
 import { Video } from 'expo-av';
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import { useFocusEffect } from '@react-navigation/native';
@@ -25,6 +25,8 @@ const Home = () => {
     const [from, setFrom] = useState('');
     const [to, setTo] = useState('');
     const [publicKey, setPublicKey] = useState('');
+    const [privateKeyA, setPrivateKey] = useState('');
+    const [amount, setAmount] = useState(''); // State để lưu số tiền
 
     useEffect(() => {
         const loadSeedPhrase = async () => {
@@ -32,11 +34,14 @@ const Home = () => {
                 const storedFrom = await AsyncStorage.getItem('from');
                 const storedTo = await AsyncStorage.getItem('to');
                 const storedPublickey = await AsyncStorage.getItem('publicKey');
-                if (storedFrom && storedTo && storedPublickey) {
+                const storedPrivatekey = await AsyncStorage.getItem('privateKey');
+                
                     setFrom(storedFrom);
                     setTo(storedTo);
-                    setPublicKey(storedPublickey);
-                }
+                    setPublicKey(storedPublickey);console.log(privateKeyA);
+                    setPrivateKey(storedPrivatekey);
+                    
+                
             } catch (error) {
                 console.error('Lỗi khi tải mã:', error);
             }
@@ -177,6 +182,53 @@ const Home = () => {
         setShowPublicKeyModal(false);
     };
 
+    const handleDonate = async () => {
+        console.log(privateKeyA + " "+ amount + " " + video.publickey)
+    
+        if (!privateKeyA) {
+            alert('Lỗi Vui lòng nhập private key hợp lệ.');
+            return;
+        }
+        if (!amount || isNaN(amount) || Number(amount) <= 0) {
+            alert('Lỗi Vui lòng nhập số tiền hợp lệ.');
+            return;
+        }
+        if (!video || !video.publickey) {
+            alert('Lỗi Video không hợp lệ hoặc public key không tồn tại.');
+            return;
+        }
+    
+        setLoading(true); // Bắt đầu hiển thị loading
+    
+        try {
+            const response = await fetch(`${BASE_URL}/api/transfer-donate`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    privateKey: privateKeyA,
+                    recipientPublicKeyString: video.publickey,
+                    amount: Number(amount),
+                }),
+            });
+    
+            if (!response.ok) {
+                throw new Error('Đã xảy ra lỗi khi gửi yêu cầu');
+            }
+    
+            const data = await response.json();
+            alert('Thành công', `Giao dịch thành công! TxSignature: ${data.txSignature}`);
+        } catch (error) {
+            console.error(error);
+            alert('Lỗi', 'Đã xảy ra lỗi trong quá trình gửi token.');
+        } finally {
+            setLoading(false); // Dừng hiển thị loading
+            handleClosePublicKeyModal(); // Đóng modal sau khi hoàn tất
+        }
+    };
+    
+
     if (loading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
@@ -244,8 +296,15 @@ const Home = () => {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Public Key của Video</Text>
+                        <Text style={styles.modalTitle}>Donate to</Text>
                         <Text style={styles.modalText}>{video.publickey}</Text>
+                        <Text>Số tiền</Text>
+                        <TextInput
+                            onChangeText={setAmount}
+                            keyboardType="numeric"
+                            style={styles.input}
+                        />
+                        <Button title={loading ? 'Đang gửi...' : 'Gửi'} onPress={handleDonate} disabled={loading} />
                         <Button title="Đóng" onPress={handleClosePublicKeyModal} />
                     </View>
                 </View>
@@ -265,12 +324,17 @@ const Home = () => {
                             Bạn đã xem 5 video. Chúc mừng!
                         </Text>
                         {luckyDrawNumber !== null && (
-                            <Text style={styles.modalText}>
-                                Số may mắn của bạn là: {luckyDrawNumber}
-                            </Text>
+                             <View style={styles.infoContainer}>
+                                <Text style={styles.modalText}>
+                                    bạn đã kiếm được: {luckyDrawNumber}
+                                </Text>
+                                <Image
+                                    source={require('../image/Logohoanthien.png')} // Đảm bảo đường dẫn đúng
+                                    style={styles.infoImage}
+                                />
+                            </View>
                         )}
                         <Button title="Claim" onPress={handleClaim} />
-                        <Button title="Đóng" onPress={handleCloseLuckyDraw} />
                     </View>
                 </View>
             </Modal>
@@ -340,29 +404,48 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         elevation: 5,
-    },
-    modalContainer: {
+        marginBottom: 50,
+    },modalContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
         width: 300,
-        padding: 20,
         backgroundColor: 'white',
+        padding: 20,
         borderRadius: 10,
         alignItems: 'center',
     },
     modalTitle: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 10,
     },
     modalText: {
         fontSize: 16,
         marginBottom: 20,
-        textAlign: 'center',
+    },
+    input: {
+        width: '100%',
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 20,
+        paddingHorizontal: 10,
+    },
+
+    infoContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 20,
+    },
+    infoImage: {
+        width: 30,
+        height: 30,
+        marginBottom: 20
     },
 });
 
