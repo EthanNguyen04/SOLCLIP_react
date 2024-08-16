@@ -6,7 +6,10 @@ import { Video } from 'expo-av';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { BASE_URL } from '../config';
 import { useFocusEffect } from '@react-navigation/native';
+import { LogBox } from 'react-native';
 
+// Tắt tất cả các cảnh báo màu vàng
+LogBox.ignoreAllLogs(true);
 const Create = () => {
     const [publicKey, setPublicKey] = useState('');
     const [videoUri, setVideoUri] = useState(null);

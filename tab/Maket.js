@@ -3,7 +3,10 @@ import { View, Text, FlatList, Image, StyleSheet, ActivityIndicator, TouchableOp
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Đảm bảo bạn đã cài AsyncStorage
 import { BASE_URL } from '../config';
 import { useFocusEffect } from '@react-navigation/native';
+import { LogBox } from 'react-native';
 
+// Tắt tất cả các cảnh báo màu vàng
+LogBox.ignoreAllLogs(true);
 const Maket = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);

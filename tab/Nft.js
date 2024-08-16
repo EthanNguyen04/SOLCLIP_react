@@ -2,7 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '../config';
+import { LogBox } from 'react-native';
 
+// Tắt tất cả các cảnh báo màu vàng
+LogBox.ignoreAllLogs(true);
 const Nft = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +53,7 @@ const Nft = () => {
                   id: item1.item.id,
                   imageUrl: item1.item.imageUrl,
                   name: item1.item.name,
-                  fol: matchedItem ? matchedItem.kol : 'Không xác định',
+                  kol: matchedItem ? matchedItem.kol : 'Không xác định',
                   from: matchedItem ? matchedItem.from : 'Không xác định',
                   to: matchedItem ? matchedItem.to : 'Không xác định'
                 };
@@ -105,7 +108,7 @@ const Nft = () => {
         const kol = String(item.kol);
         await AsyncStorage.setItem('from', from);
         await AsyncStorage.setItem('to', to);
-      await AsyncStorage.setItem('kol', kol);
+        await AsyncStorage.setItem('kol', kol);
       console.log(`Đã lưu : ${kol}`);
         console.log(`Đã lưu : ${from} đến ${to}`);
       } else {

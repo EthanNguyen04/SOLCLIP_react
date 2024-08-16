@@ -8,7 +8,10 @@ import BottomTab from './screens/BottomTab';
 import RecoverWallet from './screens/RecoverWallet';
 import UploadUser from './screens/UploadUser';
 import Wallet from './screens/Wallet';
+import { LogBox } from 'react-native';
 
+// Tắt tất cả các cảnh báo màu vàng
+LogBox.ignoreAllLogs(true);
 const Stack = createStackNavigator();
 
 export default function App() {

@@ -6,7 +6,10 @@ import { Video } from 'expo-av';
 import { useFocusEffect, useNavigation } from '@react-navigation/native'; // Nhập useNavigation
 import { LinearGradient } from 'expo-linear-gradient';
 import Entypo from '@expo/vector-icons/Entypo';
+import { LogBox } from 'react-native';
 
+// Tắt tất cả các cảnh báo màu vàng
+LogBox.ignoreAllLogs(true);
 const { width } = Dimensions.get('window');
 const numColumns = 3; // Số cột
 const videoWidth = (width - 30) / numColumns; // Chiều rộng của mỗi video (trừ khoảng cách giữa các video)
@@ -71,6 +74,8 @@ const Profile = () => {
   const handlePressOut = () => {
     setPlayingVideo(null); // Dừng phát video khi nhả ra
   };
+
+
   const navigateToWallet = () => {
     navigation.navigate('Wallet'); // Điều hướng sang màn hình Wallet
   };
@@ -123,6 +128,9 @@ const Profile = () => {
             <Entypo name="wallet" size={24} color="white" />
           </TouchableOpacity>
         </LinearGradient>
+        <TouchableOpacity style={styles.buttonKol} activeOpacity={0.8} onPress={updateKol}>
+          <Text>Làm kol</Text>
+        </TouchableOpacity>
       </View>
       {/* Card View */}
       <View style={styles.card}>

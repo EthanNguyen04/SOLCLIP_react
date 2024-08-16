@@ -6,7 +6,10 @@ import { BASE_URL } from '../config';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Đảm bảo thư viện này đã được cài đặt
+import { LogBox } from 'react-native';
 
+// Tắt tất cả các cảnh báo màu vàng
+LogBox.ignoreAllLogs(true);
 const { width, height } = Dimensions.get('window');
 
 const Kol = ({ navigation }) => {

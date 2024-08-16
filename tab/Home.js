@@ -7,7 +7,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { BASE_URL } from '../config';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Ensure this library is installed
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LogBox } from 'react-native';
 
+// Tắt tất cả các cảnh báo màu vàng
+LogBox.ignoreAllLogs(true);
 const { width, height } = Dimensions.get('window');
 
 const Home = () => {
